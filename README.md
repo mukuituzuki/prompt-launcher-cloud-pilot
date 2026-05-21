@@ -160,3 +160,14 @@ Do not add:
 Codex must not commit or backup automatically.
 
 Before commit, the human operator should review the changed files, run validation, launch the app, copy one prompt into Notepad, and confirm the prompt remains copy-only. Backup only after a human-approved commit if the tool is useful.
+
+## Web Preview (Vercel)
+
+A minimal read-only Web preview is available under `web/`.
+
+- It loads `prompts.json` as-is (no schema changes).
+- It shows Project / Workflow / Situation selection, Skill details, and Prompt preview.
+- It supports copy-only behavior for the displayed prompt.
+- It does not edit data or call external APIs.
+
+For local static preview, serve the repository root so `/prompts.json` is available, then open `/`.
