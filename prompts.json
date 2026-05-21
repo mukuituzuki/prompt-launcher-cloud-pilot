@@ -1,0 +1,548 @@
+[
+  {
+    "id": "foundation_codex_start_continue_step",
+    "name": "基盤Step開始・継続",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "current Stepを開始または継続したい",
+    "description": "最新のCodex Execution Packまたは現在のStep指示に従い、許可範囲を守って作業を開始または継続するためのCodex向けプロンプト。",
+    "prompt": "最新のCodex Execution Packまたは現在のStep指示を読み、許可された作業範囲だけで作業してください。対象ファイル、禁止範囲、検証条件を先に確認し、実装、検証、Completion Reportまで進めてください。自動commit、自動backup、外部送信、Browser automation、Chrome操作、削除、認証情報操作は、人間が明示しない限り行わないでください。完了時は安全境界への影響と未解決リスクを明記してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "Execution Packの許可範囲と禁止範囲を確認する。",
+      "自動commit、自動backup、削除、外部送信は行わない。",
+      "安全境界への影響をCompletion Reportに含める。"
+    ],
+    "post_copy_checklist": [
+      "貼り付け先がCodexであることを確認する。",
+      "対象Stepと作業フォルダーが現在のものか確認する。",
+      "完了後にCompletion Reportを読む。"
+    ]
+  },
+  {
+    "id": "foundation_codex_continue_after_clean",
+    "name": "基盤clean確認後の継続",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "Codexがworking tree not cleanで停止し、人間がclean確認済み",
+    "description": "working tree not cleanによる停止後、人間が状態を確認したうえでCodexに安全に継続させるためのプロンプト。",
+    "prompt": "人間がworking treeの状態を確認済みです。既存変更をrevertせず、現在の状態を前提に作業を継続してください。必要なら対象ファイルを読み直し、Execution Packの許可範囲内で実装、検証、Completion Reportを進めてください。自動commit、自動backup、削除、外部送信は行わず、安全境界への影響を報告してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "人間がclean確認済みの場合だけ使う。",
+      "既存変更をrevertしない。",
+      "自動commitや削除を行わせない。"
+    ],
+    "post_copy_checklist": [
+      "clean確認が完了していることを再確認する。",
+      "Codexが無関係な変更を戻していないか確認する。",
+      "検証結果と安全境界報告を読む。"
+    ]
+  },
+  {
+    "id": "foundation_codex_produce_completion_report",
+    "name": "基盤Completion Report作成",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "作業後にCompletion Reportだけ整えてほしい",
+    "description": "実装後の状態をCodexに整理させ、検証結果と安全境界を含むCompletion Reportを作らせるプロンプト。",
+    "prompt": "現在の作業結果を確認し、Execution Packの完了条件に沿ってCompletion Reportを作成してください。Files changed、Files added、実装内容、検証コマンドと結果、GUIや手動確認の状態、既知の粗さ、安全境界への影響、commit readinessを明記してください。追加の実装、削除、自動commit、自動backup、外部送信は行わないでください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "報告整理だけを依頼する。",
+      "追加実装やcleanupを勝手に行わせない。",
+      "commit readinessは人間判断の補助として扱う。"
+    ],
+    "post_copy_checklist": [
+      "ReportがExecution Packの形式に合っているか確認する。",
+      "検証結果が実際に実行済みか確認する。",
+      "commit前に人間が差分を読む。"
+    ]
+  },
+  {
+    "id": "foundation_codex_create_review_packet",
+    "name": "基盤Review Packet作成",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Review Packet運用",
+    "target": "Codex",
+    "situation": "GPT監査用のReview Packetを作成したい",
+    "description": "GPTに監査してもらうためのReview Packetを、許可範囲内でCodexに作成させるプロンプト。",
+    "prompt": "現在StepのGPT監査用Review Packetを作成してください。Execution Pack、変更概要、対象ファイル一覧、重要差分、検証結果、安全境界報告、未解決リスク、人間が確認すべき点を含めてください。秘密情報や不要な生成物を含めないでください。自動commit、自動backup、外部送信、ファイル削除は行わないでください。Review Packet作成先と内容をCompletion Reportに明記してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "秘密情報を含めない。",
+      "外部アップロードは人間だけが行う。",
+      "生成物の場所と内容を報告させる。"
+    ],
+    "post_copy_checklist": [
+      "Review Packetの対象Stepを確認する。",
+      "不要な情報が入っていないか確認する。",
+      "アップロード前に人間が内容を読む。"
+    ]
+  },
+  {
+    "id": "foundation_codex_run_tests_checks",
+    "name": "基盤tests/checks実行",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "現在Stepの検証コマンドを実行して結果を報告してほしい",
+    "description": "CodexにExecution Packで指定された検証だけを実行させ、結果を整理させるプロンプト。",
+    "prompt": "Execution Packに記載された検証コマンドを確認し、現在のStepに必要なtests/checksだけを実行して結果を報告してください。失敗した場合はログの要点、原因候補、修正が必要な範囲を整理してください。許可されていない追加実装、削除、自動commit、自動backup、外部送信は行わないでください。検証が実行できない場合は理由を明記してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "Execution Packに沿った検証だけを実行する。",
+      "失敗時に勝手な広範囲修正をさせない。",
+      "実行不能理由を明記させる。"
+    ],
+    "post_copy_checklist": [
+      "実行されたコマンドが妥当か確認する。",
+      "失敗ログの要点を読む。",
+      "修正指示が必要なら別Skillで依頼する。"
+    ]
+  },
+  {
+    "id": "foundation_codex_fix_reported_issue_only",
+    "name": "基盤報告済みIssue限定修正",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "GPTまたは人間が指摘した問題だけ修正してほしい",
+    "description": "レビューで指摘された問題に範囲を絞ってCodexに修正させるプロンプト。",
+    "prompt": "以下に貼るGPTまたは人間の指摘だけを対象に修正してください。Execution Packの許可範囲を超えず、関連しないリファクタ、cleanup、仕様変更は行わないでください。修正後は必要最小限の検証を実行し、変更ファイル、修正内容、検証結果、安全境界への影響を報告してください。自動commit、自動backup、削除、外部送信は行わないでください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "貼り付けた指摘だけを対象にする。",
+      "無関係なリファクタを避ける。",
+      "安全境界への影響を報告させる。"
+    ],
+    "post_copy_checklist": [
+      "修正対象の指摘をこの後に貼る。",
+      "差分が指摘範囲内か確認する。",
+      "検証結果を確認する。"
+    ]
+  },
+  {
+    "id": "foundation_codex_report_safety_boundary",
+    "name": "基盤安全境界影響レポート",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "今回の変更が安全境界に影響したか確認したい",
+    "description": "Codexにpolicy_gate、approval_gate、file_writerなどの安全境界影響を整理させるプロンプト。",
+    "prompt": "今回の作業差分と実行内容を確認し、安全境界への影響を報告してください。policy_gate、approval_gate、file_writer、workflow_runner、delete/send/post/execute/external API、credential/env handlingについて、affected no/yesで示し、yesがある場合は理由と人間確認事項を明記してください。追加の実装、削除、自動commit、自動backup、外部送信は行わないでください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "安全境界の報告に限定する。",
+      "yesの場合は理由を明記させる。",
+      "人間確認事項を残す。"
+    ],
+    "post_copy_checklist": [
+      "各項目がno/yesで埋まっているか確認する。",
+      "yesがあればcommit前に確認する。",
+      "Completion Reportと矛盾がないか見る。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_review_completion_report",
+    "name": "基盤Completion Reportレビュー",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "GPTレビュー運用",
+    "target": "GPT",
+    "situation": "Codex Completion ReportをGPTに確認してほしい",
+    "description": "CodexのCompletion ReportをGPTに貼り、完了条件・安全境界・検証結果の抜けを確認してもらうためのプロンプト。",
+    "prompt": "以下にCodex Completion Reportを貼ります。Execution Packの完了条件に対して、実装内容、検証結果、安全境界、未解決リスク、commit readinessに抜けや矛盾がないか確認してください。文字化け、読めない箇所、欠落、Markdown構造崩れも確認してください。問題がある場合は重大度順に指摘し、人間がcommit / backup前に確認すべき点を短くまとめてください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "貼り付け前に秘密情報が含まれていないか確認する。",
+      "GPTの指摘は自動適用しない。",
+      "commit / backupは人間が判断する。"
+    ],
+    "post_copy_checklist": [
+      "Completion Report全文を貼る。",
+      "必要ならExecution Packの条件も添える。",
+      "GPTの指摘を人間が確認する。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_review_uploaded_review_packet",
+    "name": "基盤Review Packet監査",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "Review Packet運用",
+    "target": "GPT",
+    "situation": "Review Packetをアップロードして監査してほしい",
+    "description": "Review PacketをGPTへアップロードした後、差分・検証・安全境界・レビュー観点を確認してもらうためのプロンプト。",
+    "prompt": "アップロードしたReview Packetを監査してください。変更内容、検証結果、安全境界、未解決リスク、レビューに必要な追加情報を確認し、重大度順に問題点を列挙してください。文字化け、読めない箇所、欠落、Markdown構造崩れも確認してください。問題がない場合も、残るリスクと人間がcommit / backup前に確認すべき項目を短く示してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "アップロード前に秘密情報の有無を確認する。",
+      "GPTの結論をそのままcommit判断にしない。",
+      "指摘は人間が確認してからCodexへ戻す。"
+    ],
+    "post_copy_checklist": [
+      "Review Packetが最新Stepのものか確認する。",
+      "アップロード後にこのプロンプトを貼る。",
+      "監査結果をCompletion Reportと照合する。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_decide_next_step",
+    "name": "基盤次Step判断",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "次Step判断運用",
+    "target": "GPT",
+    "situation": "完了状況を見て次Stepを決めたい",
+    "description": "Completion Reportやレビュー結果から、次に進むべきStepの候補と優先順位をGPTに整理してもらうプロンプト。",
+    "prompt": "以下に現在のCompletion Report、レビュー結果、必要ならメモを貼ります。次Stepとして何を扱うべきか、候補、優先順位、リスク、実装範囲を整理してください。安全境界の変更が必要か、project information sourcesを更新すべきか、commit / backup前に人間が確認すべき点も示してください。過剰実装にならない小さなStep案を優先してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "次Step案は人間が採用可否を判断する。",
+      "安全境界変更の有無を確認する。",
+      "commit / backup確認を忘れない。"
+    ],
+    "post_copy_checklist": [
+      "Completion Reportとレビュー結果を貼る。",
+      "提案されたStepが小さく実行可能か確認する。",
+      "採用するStepだけCodex Execution Pack化する。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_create_codex_execution_pack",
+    "name": "基盤Codex Execution Pack作成",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "次Step判断運用",
+    "target": "GPT",
+    "situation": "次Step用のCodex Execution Packを作成したい",
+    "description": "GPTに次StepのCodex Execution Packを作成してもらうプロンプト。",
+    "prompt": "次Step用のCodex Execution Packを作成してください。Target、Step名、目的、許可範囲、禁止範囲、実装要件、検証コマンド、Completion Report形式、安全境界報告、Human review / commit ruleを明確にしてください。文字化けやMarkdown崩れが起きにくい構造で、Codexがそのまま実行できる粒度にしてください。自動commit、自動backup、外部送信、不要な削除、認証情報操作は要求しないでください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "Pack内容は人間が確認してからCodexへ渡す。",
+      "禁止範囲と安全境界報告を含める。",
+      "過剰実装を避ける。"
+    ],
+    "post_copy_checklist": [
+      "Step名と許可範囲を確認する。",
+      "禁止事項が明記されているか確認する。",
+      "Codexへ渡す前に保存場所を決める。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_check_handoff_quality",
+    "name": "基盤引き継ぎ文品質確認",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "引き継ぎ文運用",
+    "target": "GPT",
+    "situation": "引き継ぎ文の文字化け・欠落・Markdown崩れを確認したい",
+    "description": "引き継ぎ文をGPTに貼り、文字化け、欠落、Markdown崩れ、次作業者への曖昧さを確認してもらうためのプロンプト。",
+    "prompt": "以下に引き継ぎ文を貼ります。文字化け、読めない箇所、欠落、Markdown構造崩れ、曖昧な指示、次の作業者が誤解しやすい箇所を確認してください。修正版が必要な場合は、内容を増やしすぎず、実務でそのまま使える形に整えてください。安全境界、commit / backup判断、未解決リスクが抜けていないかも確認してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "秘密情報が含まれていないか確認する。",
+      "GPTの修正版は人間が確認してから採用する。",
+      "元文の意図を変えすぎない。"
+    ],
+    "post_copy_checklist": [
+      "対象の引き継ぎ文をこの後に貼る。",
+      "修正版の差分を確認する。",
+      "必要ならExecution Pack側にも反映する。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_check_information_sources_update",
+    "name": "基盤情報ソース更新要否確認",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "次Step判断運用",
+    "target": "GPT",
+    "situation": "project information sourcesの更新が必要か判断したい",
+    "description": "現在の作業内容から、プロジェクト情報ソースや引き継ぎ文の更新が必要かGPTに判断してもらうプロンプト。",
+    "prompt": "以下に今回の作業概要、Completion Report、必要ならレビュー結果を貼ります。project information sources、引き継ぎ文、運用ルール、README相当の文書を更新すべきか判断してください。更新が必要な場合は、何を、なぜ、どの粒度で更新すべきかを示してください。文字化け、欠落、Markdown崩れ、安全境界の変更、commit / backup前の確認事項も見てください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "更新判断だけで、自動更新はしない。",
+      "安全境界の変更があるか確認する。",
+      "人間が採用可否を決める。"
+    ],
+    "post_copy_checklist": [
+      "作業概要とReportを貼る。",
+      "更新が必要な文書を確認する。",
+      "Codexへ渡す場合は別Step化する。"
+    ]
+  },
+  {
+    "id": "foundation_gpt_summarize_trial_feedback",
+    "name": "基盤試用Feedback要約",
+    "project": "自動化システム基盤 v1.1",
+    "workflow": "GPTレビュー運用",
+    "target": "GPT",
+    "situation": "人間のtrial feedbackを要約しPost-MVP改善案にしたい",
+    "description": "人間の試用メモをGPTに要約させ、Post-MVP改善候補に整理するプロンプト。",
+    "prompt": "以下に人間のtrial feedbackを貼ります。繰り返し発生した摩擦、欠けているSkill、危険または曖昧な文言、UI改善候補、Post-MVP改善案に分けて要約してください。すぐ自動化すべきではない項目は明確に分離し、安全境界を変える提案には注意書きを付けてください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "feedback内の秘密情報に注意する。",
+      "自動化候補と非自動化候補を分ける。",
+      "安全境界変更は人間判断にする。"
+    ],
+    "post_copy_checklist": [
+      "trial feedbackを貼る。",
+      "改善案を短期とPost-MVPに分けて読む。",
+      "採用するものだけ次Step化する。"
+    ]
+  },
+  {
+    "id": "prompt_launcher_codex_step_continuation",
+    "name": "Prompt Launcher Step継続",
+    "project": "Prompt Launcher",
+    "workflow": "Codex Step運用",
+    "target": "Codex",
+    "situation": "Prompt Launcherの現在StepをCodexで継続したい",
+    "description": "Prompt Launcher Fast MVPのExecution Packに従ってCodexに作業を続けさせるプロンプト。",
+    "prompt": "Prompt Launcher Fast MVPの最新Codex Execution Packに従って作業してください。Human decides. Prompt Launcher suggests. Clipboard copies. Human pastes. の方針を維持し、copy-onlyの安全境界を守ってください。許可されたフォルダーとファイルだけを変更し、自動paste、自動send、Browser automation、Chrome操作、外部API、削除、自動commit、自動backup、認証情報操作は行わないでください。実装後は検証結果と安全境界報告を含むCompletion Reportを出してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "Prompt Launcherと自動化システム基盤を混同しない。",
+      "copy-only方針を維持する。",
+      "自動sendやブラウザ操作を追加しない。"
+    ],
+    "post_copy_checklist": [
+      "貼り付け先がCodexであることを確認する。",
+      "最新Execution Packを指定しているか確認する。",
+      "Completion Reportで安全境界を読む。"
+    ]
+  },
+  {
+    "id": "prompt_launcher_gpt_completion_review",
+    "name": "Prompt Launcher Completion Reportレビュー",
+    "project": "Prompt Launcher",
+    "workflow": "GPTレビュー運用",
+    "target": "GPT",
+    "situation": "Prompt LauncherのCodex Completion ReportをGPTに確認してほしい",
+    "description": "Prompt LauncherのCompletion ReportをGPTにレビューしてもらうためのプロンプト。",
+    "prompt": "以下にPrompt Launcher Fast MVPのCodex Completion Reportを貼ります。Execution Packの完了条件、copy-only安全境界、Skill追加内容、README/docs更新、検証結果、known rough edges、commit readinessに抜けや矛盾がないか確認してください。文字化け、欠落、Markdown崩れ、危険な自動化につながる文言がないかも確認してください。commit / backup前の人間確認項目を短くまとめてください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "Prompt LauncherのReportだけを貼る。",
+      "危険な自動化の混入を確認する。",
+      "commit / backupは人間が判断する。"
+    ],
+    "post_copy_checklist": [
+      "Completion Report全文を貼る。",
+      "GPT指摘をCodexへ戻す前に確認する。",
+      "必要なら次StepのExecution Pack作成に進む。"
+    ]
+  },
+  {
+    "id": "prompt_launcher_trial_notes_template",
+    "name": "Prompt Launcher試用メモ",
+    "project": "Prompt Launcher",
+    "workflow": "Prompt Launcher改善運用",
+    "target": "Human",
+    "situation": "Prompt Launcherを試用した結果をメモしたい",
+    "description": "Prompt Launcherの試用結果を人間がメモするためのテンプレート。",
+    "prompt": "Prompt Launcher trial notes\n\nDate:\nProject used:\nWorkflow used:\nSituation selected:\nWas the prompt useful?:\nWas the label clear?:\nWas the paste target clear?:\nAny wrong or risky wording?:\nMissing Skill:\nImprovement note:\n\nPaste first into notes, not directly into an execution thread.",
+    "human_approval_required": true,
+    "safety_notes": [
+      "試用メモ用であり、CodexやGPTへの実行指示ではない。",
+      "秘密情報を書かない。",
+      "危険な文言を見つけたら具体的に記録する。"
+    ],
+    "post_copy_checklist": [
+      "メモ帳など安全な場所に貼る。",
+      "使ったProject/Workflow/Situationを記録する。",
+      "欠けているSkillを残す。"
+    ]
+  },
+  {
+    "id": "prompt_launcher_post_mvp_notes",
+    "name": "Prompt Launcher Post-MVP改善メモ",
+    "project": "Prompt Launcher",
+    "workflow": "Prompt Launcher改善運用",
+    "target": "Human",
+    "situation": "Post-MVP改善候補を整理したい",
+    "description": "試用後の改善候補を、人間がPost-MVP用に整理するためのテンプレート。",
+    "prompt": "Prompt Launcher Post-MVP improvement notes\n\nFriction observed:\nRepeated operation worth Skillizing:\nSafety issue observed:\nUI improvement candidate:\nSkill library improvement:\nCandidate for later automation:\nDo not automate yet:\n\nKeep copy-only behavior as the default unless a later reviewed Step explicitly changes the safety model.",
+    "human_approval_required": true,
+    "safety_notes": [
+      "Post-MVP候補は即実装指示ではない。",
+      "自動化候補は安全境界レビューが必要。",
+      "do not automate yetを明確に残す。"
+    ],
+    "post_copy_checklist": [
+      "人間のメモに貼る。",
+      "安全面の懸念を分離して書く。",
+      "次Step化する候補だけ選ぶ。"
+    ]
+  },
+  {
+    "id": "prompt_launcher_skill_improvement_request",
+    "name": "Prompt Launcher Skill改善依頼",
+    "project": "Prompt Launcher",
+    "workflow": "Prompt Launcher改善運用",
+    "target": "GPT",
+    "situation": "既存Skillの文言や分類を改善したい",
+    "description": "既存Skillの名前、Situation、Prompt文、Safety notesをGPTに改善してもらうためのプロンプト。",
+    "prompt": "以下にPrompt LauncherのSkill定義または試用メモを貼ります。Project、Workflow、Situation、Skill名、description、prompt、safety_notes、post_copy_checklistの改善案を出してください。copy-only方針を守り、自動paste、自動send、Browser automation、外部API、削除、認証情報操作につながる文言は入れないでください。改善案はJSONへ反映しやすい形で、変更理由も短く添えてください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "GPT案を自動反映しない。",
+      "copy-only方針を崩さない。",
+      "分類変更は人間が確認する。"
+    ],
+    "post_copy_checklist": [
+      "対象Skill定義やメモを貼る。",
+      "危険な文言がないか確認する。",
+      "採用する変更だけCodexへ渡す。"
+    ]
+  },
+  {
+    "id": "prompt_launcher_create_next_execution_pack",
+    "name": "Prompt Launcher次Step Pack作成",
+    "project": "Prompt Launcher",
+    "workflow": "Prompt Launcher改善運用",
+    "target": "GPT",
+    "situation": "Prompt Launcherの次Step用Codex Execution Packを作成したい",
+    "description": "Prompt Launcherの次StepをGPTに設計してもらい、Codexへ渡せるExecution Pack形式にまとめるためのプロンプト。",
+    "prompt": "Prompt Launcherの次Step用Codex Execution Packを作成してください。Fast MVP方針は Human decides. Prompt Launcher suggests. Clipboard copies. Human pastes. です。copy-onlyの安全境界を守り、Codexが実装できるようにTarget、許可範囲、禁止範囲、実装要件、検証コマンド、Completion Report形式を明確にしてください。過剰実装にならない小さなStepに絞ってください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "次Stepの範囲を人間が確認してからCodexへ渡す。",
+      "copy-only方針を維持する。",
+      "自動貼り付け、自動送信、外部API連携を要求しない。"
+    ],
+    "post_copy_checklist": [
+      "Packに禁止範囲が含まれているか確認する。",
+      "Stepとして大きすぎないか確認する。",
+      "Codexへ渡す前に保存場所とファイル名を決める。"
+    ]
+  },
+  {
+    "id": "browser_gpt_review_screenshot_diagnostic",
+    "name": "Chrome / Browser Useスクショ診断レビュー",
+    "project": "Browser Use / Chrome Diagnostic",
+    "workflow": "Browser Use / Chrome診断運用",
+    "target": "GPT",
+    "situation": "ChromeやBrowser UseのスクリーンショットをGPTに診断してほしい",
+    "description": "スクリーンショットをGPTに見せ、接続状態や表示上の問題を安全に確認してもらうプロンプト。",
+    "prompt": "以下にChromeまたはBrowser Use関連のスクリーンショットやメモを提示します。表示内容から、接続状態、エラー表示、次に人間が確認すべき点を整理してください。認証情報、Cookie、個人情報を読み取ろうとしないでください。自動操作を指示せず、人間が安全に確認できる手順だけを提案してください。文字化け、欠落、読めない表示があれば指摘してください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "スクリーンショットに秘密情報が写っていないか確認する。",
+      "GPTに自動操作を依頼しない。",
+      "認証情報やCookieを読ませない。"
+    ],
+    "post_copy_checklist": [
+      "画像に秘密情報がないか確認する。",
+      "GPTにスクリーンショットを添付する。",
+      "提案された操作は人間が判断する。"
+    ]
+  },
+  {
+    "id": "browser_codex_safe_diagnostic_instruction",
+    "name": "Browser Use安全診断指示",
+    "project": "Browser Use / Chrome Diagnostic",
+    "workflow": "Browser Use / Chrome診断運用",
+    "target": "Codex",
+    "situation": "Browser Use / Chrome連携の状態確認プロンプトを作りたい",
+    "description": "CodexにBrowser Use / Chrome連携の状態を安全に確認させるための診断プロンプト。",
+    "prompt": "Browser Use / Chrome連携の状態を診断してください。利用可能なプラグイン、スキル、MCPツールを確認し、実際にブラウザ操作が必要な場合は人間に確認してから進めてください。認証情報、Cookie、プロフィール情報、外部送信を扱わない範囲で、現在できること、できないこと、必要な承認を短く報告してください。自動paste、自動send、自動投稿、外部API呼び出しは行わないでください。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "ブラウザ操作が必要なら人間承認を取る。",
+      "認証情報やCookieを扱わせない。",
+      "自動送信や自動投稿を行わせない。"
+    ],
+    "post_copy_checklist": [
+      "貼り付け先がCodexであることを確認する。",
+      "必要な診断範囲を追加で明記する。",
+      "Codexの報告に承認が必要な操作が含まれていないか確認する。"
+    ]
+  },
+  {
+    "id": "browser_human_chrome_connection_status_note",
+    "name": "Chrome接続状態メモ",
+    "project": "Browser Use / Chrome Diagnostic",
+    "workflow": "Browser Use / Chrome診断運用",
+    "target": "Human",
+    "situation": "Chrome extension接続状態をメモしたい",
+    "description": "Chrome extensionやBrowser Useの接続状態を人間が記録するためのメモテンプレート。",
+    "prompt": "Chrome / Browser Use connection status note\n\nDate:\nTool or extension checked:\nVisible status:\nError message:\nWhat was attempted manually:\nWhat worked:\nWhat did not work:\nScreenshot saved?:\nNeeds Codex diagnostic?:\nNeeds GPT review?:\n\nDo not include credentials, cookies, tokens, or private profile data.",
+    "human_approval_required": true,
+    "safety_notes": [
+      "認証情報やCookieを書かない。",
+      "個人情報が写るスクリーンショットに注意する。",
+      "自動操作指示ではなくメモとして使う。"
+    ],
+    "post_copy_checklist": [
+      "安全なメモ先に貼る。",
+      "エラー文を必要最小限で記録する。",
+      "次にGPT/Codexへ渡すか判断する。"
+    ]
+  },
+  {
+    "id": "browser_human_safe_diagnostic_checklist",
+    "name": "Browser Use安全診断チェックリスト",
+    "project": "Browser Use / Chrome Diagnostic",
+    "workflow": "Browser Use / Chrome診断運用",
+    "target": "Human",
+    "situation": "Browser Use / Chrome診断前に安全確認したい",
+    "description": "Browser UseやChrome診断の前に人間が安全確認するためのチェックリスト。",
+    "prompt": "Safe Browser Use / Chrome diagnostic checklist\n\n1. Confirm no credentials, tokens, cookies, or private profile data will be shared.\n2. Confirm screenshots do not expose sensitive information.\n3. Confirm the prompt asks for diagnosis only, not automatic control.\n4. Confirm any browser operation requires explicit human approval.\n5. Confirm no external API call, auto-send, auto-post, or auto-paste is requested.\n6. Record what was checked and what remains unknown.",
+    "human_approval_required": true,
+    "safety_notes": [
+      "診断前の人間チェック用。",
+      "秘密情報を共有しない。",
+      "自動操作を依頼しない。"
+    ],
+    "post_copy_checklist": [
+      "診断前に各項目を確認する。",
+      "問題があればスクリーンショットや貼り付けを止める。",
+      "必要ならメモに残す。"
+    ]
+  },
+  {
+    "id": "human_commit_backup_checklist",
+    "name": "commit / backup前チェック",
+    "project": "Prompt Launcher",
+    "workflow": "Prompt Launcher改善運用",
+    "target": "Human",
+    "situation": "Step完了後のcommit / backup前チェックをしたい",
+    "description": "Step完了後に人間がcommitやbackup前に確認するためのチェックリスト。",
+    "prompt": "commit / backup前に確認してください。\n\n1. Completion Reportを読む。\n2. 作成・変更ファイルがExecution Packの許可範囲内か確認する。\n3. JSON妥当性とpy_compileなどの検証結果を確認する。\n4. GUIやclipboardなど手元でしか確認できない動作を試す。\n5. 不要な秘密情報、ログ、backup、生成物が含まれていないか確認する。\n6. 問題がなければ人間の判断でcommitし、その後必要ならbackupする。",
+    "human_approval_required": true,
+    "safety_notes": [
+      "commitとbackupは人間だけが実行する。",
+      "Codexに自動commitさせない。",
+      "不要なファイルが含まれていないか確認する。"
+    ],
+    "post_copy_checklist": [
+      "このチェックリストを人間が読む。",
+      "必要な手動確認を済ませる。",
+      "commit可否を人間が決める。"
+    ]
+  },
+  {
+    "id": "human_paste_target_confirmation",
+    "name": "貼り付け先確認チェックリスト",
+    "project": "Prompt Launcher",
+    "workflow": "Prompt Launcher改善運用",
+    "target": "Human",
+    "situation": "コピーしたpromptを貼る前に貼り付け先を確認したい",
+    "description": "コピーしたPromptをCodex/GPT/メモのどこへ貼るべきか、人間が確認するためのチェックリスト。",
+    "prompt": "Paste target confirmation checklist\n\n1. Target says Codex, GPT, or Human.\n2. The destination thread matches the target.\n3. The prompt header includes Project, Workflow, Skill, Target, Human approval.\n4. The prompt does not contain unintended private data.\n5. The prompt does not request auto-send, auto-paste, browser automation, external API calls, deletion, automatic commit, or automatic backup.\n6. If unsure, paste into Notepad first.",
+    "human_approval_required": true,
+    "safety_notes": [
+      "誤貼り付け防止用。",
+      "不安な場合はNotepadに貼る。",
+      "Targetと実際のthreadを一致させる。"
+    ],
+    "post_copy_checklist": [
+      "Targetを読む。",
+      "貼り付け先threadを確認する。",
+      "安全でなければ貼り付けを止める。"
+    ]
+  }
+]
